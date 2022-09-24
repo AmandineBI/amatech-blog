@@ -93,6 +93,39 @@ class PostsController extends Controller
 
     }
 
+    public function create() {
+        if (!auth()->user()->is_admin) {
+            abort(403);
+        } else {
+            return Inertia::render('Blog/Admin/CreatePost', [
+                'permissions' => auth()->user()->is_admin,
+                'filters' => request()->all('search'),
+                'can' => [
+                    'list' => true,
+                    'edit' => auth()->user()->is_admin,
+                ],
+                //'blog_post' => $post[0],
+            ]);
+        }
+    }
+
+    public function store(Request $request) {
+        // store form inputs to database
+        Post::create([
+            'title' => $request->title,
+            'original_content' => $request->content,
+            'original_seo_content' => $request->content,
+            'categories' => 0,
+        ]);
+        return redirect()->route('blogAdmin');
+    }
+
+    public function destroy(Post $post) {
+        $post->delete();
+        sleep(1);
+        return redirect()->route('blogAdmin')->with('message', 'Post Delete Successfully');
+    }
+
     public function edit($post_id) {
         $post = Post::query()
                         ->with(['tags' => function ($query) {

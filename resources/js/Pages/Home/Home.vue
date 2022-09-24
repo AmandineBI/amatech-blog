@@ -7,7 +7,12 @@ import { Head } from '@inertiajs/inertia-vue3';
     <Head title="Admin Dashboard" />
 
     <AuthenticatedLayout>
-        <h1>Home Page</h1>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Home Page
+            </h2>
+        </template>
+        
     </AuthenticatedLayout>
 </template>
 

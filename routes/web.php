@@ -76,6 +76,8 @@ Route::get('/blog', function() {
     return Inertia::render('Welcome');
 });
 
+Route::resource('posts', PostsController::class);
+
 Route::middleware(['auth', 'is_admin'])
     ->get('/blog/admin', [PostsController::class, 'index'])
     ->name('blogAdmin');
@@ -88,6 +90,11 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 Route::middleware(['auth', 'is_admin'])->group(function () {
     return Route::get('/blog/admin/view/{id}', [PostsController::class, 'show'])
         ->name('blogAdminView');
+});
+
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    return Route::get('/blog/admin/create', [PostsController::class, 'create'])
+        ->name('blogAdminCreate');
 });
 
 require __DIR__.'/auth.php';

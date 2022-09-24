@@ -39,6 +39,14 @@ class Post extends Model
         'published_at' => 'datetime',
     ];
 
+    protected $attributes = [
+        'author' => 'Amandine Levecq',
+        'original_language_code' => 'EN',
+        'published' => 1,
+        'categories' => '',
+        'level' => 1,
+    ];
+
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'posts_categories');
