@@ -1,7 +1,8 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import DefaultLayout from '@/Layouts/DefaultLayout.vue';
 import { Inertia } from '@inertiajs/inertia';
 import { Head, Link } from '@inertiajs/inertia-vue3';
+import BreezeButton from "@/Components/PrimaryButton.vue";
 
 const props = defineProps({
     blog_posts: Array,
@@ -14,14 +15,14 @@ function destroy(id) {
 <template>
     <Head title="Admin Dashboard" />
 
-    <AuthenticatedLayout>
+    <DefaultLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Blog posts
             </h2>
         </template>
 
-        <Link :href="route('blogAdminCreate')" class="inline-block px-4 py-3 bg-blue-500 text-white rounded mb-4">Create new post</Link>
+        <Link :href="route('adminBlogCreate')" class="inline-block px-4 py-3 bg-blue-500 text-white rounded mb-4">Create new post</Link>
 
         <div v-if="props.blog_posts">
             <div class="articles-list" v-for="post in props.blog_posts">
@@ -31,8 +32,8 @@ function destroy(id) {
                 <br/>
                 {{ post.content }}
                 <br/>
-                <Link :href="route('blogAdminEdit', {id: post.id})" class="inline-block px-4 py-1 mr-5 mt-2 bg-blue-500 text-white rounded mb-4">Edit post</Link>
-                <Link :href="route('blogAdminView', {id: post.id})" class="inline-block px-4 py-1 mr-5 mt-2 bg-blue-500 text-white rounded mb-4">View post</Link>
+                <Link :href="route('adminBlogEdit', {id: post.id})" class="inline-block px-4 py-1 mr-5 mt-2 bg-blue-500 text-white rounded mb-4">Edit post</Link>
+                <Link :href="route('adminBlogView', {id: post.id})" class="inline-block px-4 py-1 mr-5 mt-2 bg-blue-500 text-white rounded mb-4">View post</Link>
                 <BreezeButton @click="destroy(post.id)" class="inline-block px-4 py-1 bg-blue-500 text-white rounded mb-4">Delete post</BreezeButton>
 
                 <ol class="categories">
@@ -46,7 +47,7 @@ function destroy(id) {
             <p>Come back later to discover awesome posts!</p>
         </div>
 
-    </AuthenticatedLayout>
+    </DefaultLayout>
 </template>
 
 <style>

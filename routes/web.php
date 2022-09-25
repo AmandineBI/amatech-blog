@@ -24,9 +24,9 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
 
-Route::group(['middleware' => 'auth'], function() {
+/*Route::group(['middleware' => 'auth'], function() {
     Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
     Route::get("/redirectAuthenticatedUsers", [RedirectAuthenticatedUsersController::class, "home"]);
@@ -35,7 +35,8 @@ Route::group(['middleware' => 'auth'], function() {
         Route::inertia('/adminDashboard', 'AdminDashboard')->name('adminDashboard');
     });
     Route::inertia('/userDashboard', 'UserDashboard')->name('userDashboard');
-});
+});*/
+Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
 
 Route::get('/guestDashboard', function () {
@@ -72,29 +73,43 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/blog', function() {
-    return Inertia::render('Welcome');
-});
+// Blog Home Page - List of posts
+//Route::get('/blog', function() {
+//    return Inertia::render('Welcome');
+//});
 
+// Blog guests - List of Posts
+Route::get('/blog', [PostsController::class, 'index'], ['adminFunctionality' => false])
+    ->name('blog');
+
+// Blog guests - View post
+Route::get('/blog/view/{id}', [PostsController::class, 'show'])
+        ->name('blogView');
+
+// Blog admin resource pages - to adapt and add Middleware??
 Route::resource('posts', PostsController::class);
 
+// Blog admin - List of Posts
 Route::middleware(['auth', 'is_admin'])
-    ->get('/blog/admin', [PostsController::class, 'index'])
-    ->name('blogAdmin');
+    ->get('/blog/admin', [PostsController::class, 'indexAdmin'], ['adminFunctionality' => true])
+    ->name('adminBlog');
 
+// Blog admin - Edit page
 Route::middleware(['auth', 'is_admin'])->group(function () {
     return Route::get('/blog/admin/edit/{id}', [PostsController::class, 'edit'])
-        ->name('blogAdminEdit');
+        ->name('adminBlogEdit');
 });
 
+// Blog admin - View post
 Route::middleware(['auth', 'is_admin'])->group(function () {
     return Route::get('/blog/admin/view/{id}', [PostsController::class, 'show'])
-        ->name('blogAdminView');
+        ->name('adminBlogView');
 });
 
+// Blog admin - Create post
 Route::middleware(['auth', 'is_admin'])->group(function () {
     return Route::get('/blog/admin/create', [PostsController::class, 'create'])
-        ->name('blogAdminCreate');
+        ->name('adminBlogCreate');
 });
 
 require __DIR__.'/auth.php';

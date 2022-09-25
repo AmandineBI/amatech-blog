@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 use App\Models\Tag;
 use Inertia\Inertia;
@@ -47,17 +48,46 @@ class PostsController extends Controller
                         ->orderBy('published_at', 'desc')
                         ->get();
                 
-
         //return view('index', ['blog_posts' => $posts]);
-        return Inertia::render('Blog/Admin/ListPost', [
-            'permissions' => auth()->user()->is_admin,
+        return Inertia::render('Blog/ListPost', [
+            'permissions' => false,
             'filters' => request()->all('search'),
             'can' => [
                 'list' => true,
-                'edit' => auth()->user()->is_admin,
+                'edit' => false,
             ],
             'blog_posts' => $posts,
         ]);
+        
+    }
+
+    public function indexAdmin() {
+
+        $posts = Post::query()
+                        ->with(['tags' => function ($query) {
+                            $query->select('original_name');
+                        }])
+                        ->join('contents', 'posts.id', '=', 'contents.post_id', 'left outer')
+                        ->join('seo_contents', 'posts.id', '=', 'seo_contents.post_id', 'left outer')
+                        /*->where(function ($query) {
+                            $query->where('contents.language_code', '=', 'EN')
+                                ->orWhere();
+                        })*/
+                        ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN"')
+                        ->select('posts.*', DB::raw('coalesce(contents.content, posts.original_content) AS content'))
+                        ->orderBy('published_at', 'desc')
+                        ->get();
+                
+        return Inertia::render('Blog/Admin/ListPost', [
+            'permissions' => auth()->user()?->is_admin,
+            'filters' => request()->all('search'),
+            'can' => [
+                'list' => true,
+                'edit' => auth()->user()?->is_admin,
+            ],
+            'blog_posts' => $posts,
+        ]);
+        
     }
 
     public function show($post_id) {
@@ -77,32 +107,36 @@ class PostsController extends Controller
                         ->orderBy('published_at', 'desc')
                         ->get(); // This returns an array???
         
-        if (!auth()->user()->is_admin) {
+        if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
             return Inertia::render('Blog/ViewPost', [
-                'permissions' => auth()->user()->is_admin,
+                'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
                 'can' => [
                     'list' => true,
-                    'edit' => auth()->user()->is_admin,
+                    'edit' => auth()->user()?->is_admin,
                 ],
                 'blog_post' => $post[0],
+                'canLogin' => Route::has('login'),
+                'canRegister' => Route::has('register'),
+                'laravelVersion' => '9',
+                'phpVersion' => '8',
             ]);
         }
 
     }
 
     public function create() {
-        if (!auth()->user()->is_admin) {
+        if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
             return Inertia::render('Blog/Admin/CreatePost', [
-                'permissions' => auth()->user()->is_admin,
+                'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
                 'can' => [
                     'list' => true,
-                    'edit' => auth()->user()->is_admin,
+                    'edit' => auth()->user()?->is_admin,
                 ],
                 //'blog_post' => $post[0],
             ]);
@@ -117,13 +151,13 @@ class PostsController extends Controller
             'original_seo_content' => $request->content,
             'categories' => 0,
         ]);
-        return redirect()->route('blogAdmin');
+        return redirect()->route('adminBlog');
     }
 
     public function destroy(Post $post) {
         $post->delete();
         sleep(1);
-        return redirect()->route('blogAdmin')->with('message', 'Post Delete Successfully');
+        return redirect()->route('adminBlog')->with('message', 'Post Delete Successfully');
     }
 
     public function edit($post_id) {
@@ -139,15 +173,15 @@ class PostsController extends Controller
                         ->orderBy('published_at', 'desc')
                         ->get(); // This returns an array???
 
-        if (!auth()->user()->is_admin) {
+        if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
             return Inertia::render('Blog/Admin/EditPost', [
-                'permissions' => auth()->user()->is_admin,
+                'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
                 'can' => [
                     'list' => true,
-                    'edit' => auth()->user()->is_admin,
+                    'edit' => auth()->user()?->is_admin,
                 ],
                 'blog_post' => $post[0],
             ]);

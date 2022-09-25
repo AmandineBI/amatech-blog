@@ -1,5 +1,5 @@
 <script setup>
-    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import DefaultLayout from '@/Layouts/DefaultLayout.vue';
     import { Head } from '@inertiajs/inertia-vue3';
     
     const props = defineProps({
@@ -10,7 +10,7 @@
 <template>
     <Head title="Blog Posts" />
 
-    <AuthenticatedLayout>
+    <DefaultLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Blog posts
@@ -37,7 +37,7 @@
             <p>Come back later to discover awesome posts!</p>
         </div>
 
-    </AuthenticatedLayout>
+    </DefaultLayout>
 </template>
 
 <style>

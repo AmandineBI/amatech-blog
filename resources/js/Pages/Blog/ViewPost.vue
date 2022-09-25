@@ -1,16 +1,23 @@
 <script setup>
-    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import DefaultLayout from '@/Layouts/DefaultLayout.vue';
     import { Head } from '@inertiajs/inertia-vue3';
     
     const props = defineProps({
         blog_post: Object,
+        canLogin: Boolean,
+        canRegister: Boolean,
+        permissions: Boolean,
+        filters: Array,
+        can: Array,
+        laravelVersion: String,
+        phpVersion: String,
     });
 </script>
 
 <template>
     <Head title="Edit post" />
 
-    <AuthenticatedLayout>
+    <DefaultLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 View post
@@ -18,7 +25,7 @@
         </template>
         
         <pre>{{ blog_post }}</pre>
-    </AuthenticatedLayout>
+    </DefaultLayout>
 </template>
 
 <style>

@@ -48,7 +48,7 @@
                 <button type="submit" class="inline-block px-4 py-3 bg-blue-500 text-white rounded">
                     Save post
                 </button>
-                <Link :href="route('blogAdmin')" class="ml-2 inline-block px-4 py-3 bg-gray-300 rounded">
+                <Link :href="route('adminBlog')" class="ml-2 inline-block px-4 py-3 bg-gray-300 rounded">
                     Cancel
                 </Link>
             </div>
