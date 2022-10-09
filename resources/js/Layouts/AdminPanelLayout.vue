@@ -124,12 +124,27 @@
                     <div class="py-12">
                         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                <div class="p-6 bg-white border-b border-gray-200">
-                                    <div v-if="$page.props.flash.message" class="text-blue-600 mb-4">
-                                        {{ $page.props.flash.message }}
+                                <div class="p-6 bg-white border-b border-gray-200 grid grid-cols-5">
+                                    <div class="col-span-1 pr-5 border-r-2 border-r-slate-200">
+                                        <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('adminPanel')">
+                                            Posts
+                                        </ResponsiveNavLink>
+                                        <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminCategories.index')" :active="route().current('adminCategories.index')">
+                                            Categories
+                                        </ResponsiveNavLink>
+                                        <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('blog.index')">
+                                            Languages
+                                        </ResponsiveNavLink>
+                                        <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('home')">
+                                            Users
+                                        </ResponsiveNavLink>
                                     </div>
-
-                                    <slot />
+                                    <div class="col-span-4 pl-5">
+                                        <div v-if="$page.props.flash.message" class="text-blue-600 mb-4">
+                                            {{ $page.props.flash.message }}
+                                        </div>
+                                        <slot />
+                                    </div>
                                 </div>
                             </div>
                         </div>

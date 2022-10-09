@@ -14,6 +14,15 @@ class Category extends Model
 
     protected  $table = "categories";
 
+        /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'original_name',
+    ];
+
     public function posts()
     {
         return $this->belongsToMany(Post::class, 'posts_categories');

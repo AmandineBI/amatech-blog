@@ -18,6 +18,13 @@ class Post extends Model
     protected  $table = "posts";
 
     /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

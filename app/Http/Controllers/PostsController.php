@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -23,7 +24,7 @@ class PostsController extends Controller
     //update()  to commit the edited resource to the databse    update
     //destroy() to delete a resource from the database          delete
 
-    public function index() {
+    public function index() { // Limit data
         /*$posts1 = DB::table('posts')
                     ->join('contents', 'posts.id', '=', 'contents.post_id', 'left outer')
                     ->join('seo_contents', 'posts.id', '=', 'seo_contents.post_id', 'left outer')
@@ -61,6 +62,7 @@ class PostsController extends Controller
         
     }
 
+
     public function indexAdmin() {
 
         $posts = Post::query()
@@ -90,7 +92,8 @@ class PostsController extends Controller
         
     }
 
-    public function show($post_id) {
+
+    public function show($post_id) { // Limit data
         $post = Post::query()
                         ->with(['tags' => function ($query) {
                             $query->select('original_name');
@@ -127,6 +130,7 @@ class PostsController extends Controller
 
     }
 
+
     public function create() {
         if (!auth()->user()?->is_admin) {
             abort(403);
@@ -143,24 +147,32 @@ class PostsController extends Controller
         }
     }
 
-    public function store(Request $request) {
+
+    public function store(StorePostRequest $request) {
         // store form inputs to database
         Post::create([
-            'title' => $request->title,
-            'original_content' => $request->content,
-            'original_seo_content' => $request->content,
+            'title' => $request->validated()['title'],
+            'original_content' => $request->validated()['content'],
+            'original_seo_content' => $request->validated()['content'],
             'categories' => 0,
         ]);
-        return redirect()->route('adminBlog');
+        return redirect()->route('adminPanel')
+                    ->with('message', 'Post created successfully');
     }
 
-    public function destroy(Post $post) {
-        $post->delete();
-        sleep(1);
-        return redirect()->route('adminBlog')->with('message', 'Post Delete Successfully');
+
+    public function destroy($post_id) { //route model binding?
+        if (!auth()->user()?->is_admin) {
+            abort(403);
+        } else {
+            $post = Post::query()->where('posts.id', $post_id);
+            $post->delete();
+            return redirect()->route('adminPanel')->with('message', 'Post deleted successfully');
+        }
     }
 
-    public function edit($post_id) {
+
+    public function edit($post_id) { // Limit data
         $post = Post::query()
                         ->with(['tags' => function ($query) {
                             $query->select('original_name');
@@ -186,5 +198,17 @@ class PostsController extends Controller
                 'blog_post' => $post[0],
             ]);
         }
+    }
+
+
+    public function update($post_id, StorePostRequest $request) {
+        $post = Post::find($post_id);
+        $post->update([
+            'title' => $request->validated()['title'],
+            'original_content' => $request->validated()['content'],
+        ]);
+
+        return redirect()->route('adminPanel')
+            ->with('message', 'Post updated successfully');
     }
 }

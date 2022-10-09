@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\RedirectAuthenticatedUsersController;
 use App\Http\Controllers\PostsController;
+use App\Http\Controllers\CategoriesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,26 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+/*
+|--------------------------------------------------------------------------
+| Blog Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['middleware' => 'auth'], function() {
+    Route::inertia('/dashboard', 'Dashboard')->name('dashboard'); //Use of "::inertia" because does not go through Controller.
+});
+
+Route::group(['prefix' => 'admin', 'middelware' => ['auth', 'is_admin']], function () {
+    Route::get('blog/adminPanel', [PostsController::class, 'indexAdmin'], ['adminFunctionality' => true])->name('adminPanel');
+    Route::resource('blog', PostsController::class)->names('adminBlog');
+    Route::resource('blog/adminPanel/categories', CategoriesController::class)->names('adminCategories');
+});
+
+Route::resource('blog', PostsController::class)->only(['index', 'show'])->names('blog');
+
+
+
 /*Route::group(['middleware' => 'auth'], function() {
     Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
@@ -36,17 +57,19 @@ Route::get('/', function () {
     });
     Route::inertia('/userDashboard', 'UserDashboard')->name('userDashboard');
 });*/
-Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
 
-Route::get('/guestDashboard', function () {
+/***********************/
+/*** Guest Dashboard ***/
+/***********************/
+/*Route::get('/guestDashboard', function () {
     return Inertia::render('GuestDashboard', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-})->name('guestDashboard');
+})->name('guestDashboard');*/
 
 
 /*Route::get('/admin', function () {
@@ -67,9 +90,11 @@ Route::middleware(['auth'])->group(function () {
 });*/
 
 
+
+
 /*
 |--------------------------------------------------------------------------
-| Blog Routes
+| Other Blog Routes
 |--------------------------------------------------------------------------
 */
 
@@ -79,37 +104,45 @@ Route::middleware(['auth'])->group(function () {
 //});
 
 // Blog guests - List of Posts
-Route::get('/blog', [PostsController::class, 'index'], ['adminFunctionality' => false])
-    ->name('blog');
+//Route::get('/blog', [PostsController::class, 'index'], ['adminFunctionality' => false])
+//    ->name('blog');
 
 // Blog guests - View post
-Route::get('/blog/view/{id}', [PostsController::class, 'show'])
-        ->name('blogView');
+//Route::get('/blog/view/{id}', [PostsController::class, 'show'])
+//        ->name('blogView');
 
 // Blog admin resource pages - to adapt and add Middleware??
-Route::resource('posts', PostsController::class);
+//Route::resource('posts', PostsController::class);
 
 // Blog admin - List of Posts
-Route::middleware(['auth', 'is_admin'])
-    ->get('/blog/admin', [PostsController::class, 'indexAdmin'], ['adminFunctionality' => true])
-    ->name('adminBlog');
+//Route::middleware(['auth', 'is_admin'])
+//    ->get('/blog/admin', [PostsController::class, 'indexAdmin'], ['adminFunctionality' => true])
+//    ->name('adminBlog.indexAdmin');
+
 
 // Blog admin - Edit page
-Route::middleware(['auth', 'is_admin'])->group(function () {
+/*Route::middleware(['auth', 'is_admin'])->group(function () {
     return Route::get('/blog/admin/edit/{id}', [PostsController::class, 'edit'])
         ->name('adminBlogEdit');
-});
+});*/
 
 // Blog admin - View post
-Route::middleware(['auth', 'is_admin'])->group(function () {
+/*Route::middleware(['auth', 'is_admin'])->group(function () {
     return Route::get('/blog/admin/view/{id}', [PostsController::class, 'show'])
         ->name('adminBlogView');
-});
+});*/
 
 // Blog admin - Create post
-Route::middleware(['auth', 'is_admin'])->group(function () {
+/*Route::middleware(['auth', 'is_admin'])->group(function () {
     return Route::get('/blog/admin/create', [PostsController::class, 'create'])
         ->name('adminBlogCreate');
-});
+});*/
+
+/*Route::group(['middleware' => ['auth', 'is_admin']], function () {
+    Route::resource('/blog/admin', PostsController::class)->name('*', 'adminBlog');
+    //Route::get('/blog/admin/edit/{id}', [PostsController::class, 'edit'])->name('adminBlogEdit');
+    //Route::get('/blog/admin/view/{id}', [PostsController::class, 'show'])->name('adminBlogView');
+    //Route::get('/blog/admin/create', [PostsController::class, 'create'])->name('adminBlogCreate');
+});*/
 
 require __DIR__.'/auth.php';

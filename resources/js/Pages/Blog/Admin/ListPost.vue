@@ -1,5 +1,5 @@
 <script setup>
-import DefaultLayout from '@/Layouts/DefaultLayout.vue';
+import AdminPanelLayout from '@/Layouts/AdminPanelLayout.vue';
 import { Inertia } from '@inertiajs/inertia';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import BreezeButton from "@/Components/PrimaryButton.vue";
@@ -8,37 +8,44 @@ const props = defineProps({
     blog_posts: Array,
 });
 function destroy(id) {
-    Inertia.delete(route('posts.destroy', id));
+    if(confirm('Are you sure?')) {
+        Inertia.delete(route('adminBlog.destroy', id)); //inertia delete method
+    }
 }
 </script>
 
 <template>
     <Head title="Admin Dashboard" />
 
-    <DefaultLayout>
+    <AdminPanelLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Blog posts
             </h2>
         </template>
 
-        <Link :href="route('adminBlogCreate')" class="inline-block px-4 py-3 bg-blue-500 text-white rounded mb-4">Create new post</Link>
+        <Link :href="route('adminBlog.create')" class="inline-block px-4 py-3 bg-blue-500 text-white rounded mb-4">Create new post</Link>
 
         <div v-if="props.blog_posts">
-            <div class="articles-list" v-for="post in props.blog_posts">
-                <h3>{{ post.title }}</h3>
-                <div><small>{{ post.author }}</small></div>
-                <div><small>{{ post.published_at }}</small></div>
-                <br/>
-                {{ post.content }}
-                <br/>
-                <Link :href="route('adminBlogEdit', {id: post.id})" class="inline-block px-4 py-1 mr-5 mt-2 bg-blue-500 text-white rounded mb-4">Edit post</Link>
-                <Link :href="route('adminBlogView', {id: post.id})" class="inline-block px-4 py-1 mr-5 mt-2 bg-blue-500 text-white rounded mb-4">View post</Link>
-                <BreezeButton @click="destroy(post.id)" class="inline-block px-4 py-1 bg-blue-500 text-white rounded mb-4">Delete post</BreezeButton>
+            <div class="my-5 py-5 border-b-2 border-b-slate-200" v-for="post in props.blog_posts">
+                <h3 class="text-lg font-bold">{{ post.title }}</h3>
+                <div class="text-xs">{{ post.author }}</div>
+                <div class="text-xs">{{ post.published_at }}</div>
+                <div class="my-2">
+                    {{ post.content }}
+                </div>
 
-                <ol class="categories">
-                    <li v-for="tag in post.tags">{{ tag.original_name }}</li>
+                <ol class="list-none p-1 block">
+                    Tags: 
+                    <li class="inline-block border-2 border-teal-300 p-1 rounded my-1 mr-3 bg-teal-100" v-for="tag in post.tags">
+                        {{ tag.original_name }}
+                    </li>
                 </ol>
+
+                <Link :href="route('adminBlog.edit', {id: post.id})" class="inline-flex px-4 py-2 mr-5 mt-2 mb-4 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest rounded hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">Edit post</Link>
+                <Link :href="route('adminBlog.show', {id: post.id})" class="inline-flex px-4 py-2 mr-5 mt-2 mb-4 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest rounded hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">View post</Link>
+                <BreezeButton @click="destroy(post.id)" class="inline-block px-4 py-2 bg-blue-500 text-white rounded mb-4">Delete post</BreezeButton>
+
             </div>
         </div>
 
@@ -47,40 +54,12 @@ function destroy(id) {
             <p>Come back later to discover awesome posts!</p>
         </div>
 
-    </DefaultLayout>
+    </AdminPanelLayout>
 </template>
 
 <style>
     * {
         box-sizing: border-box;
-    }
-
-    h1 {
-        max-width: 1000px;
-    }
-
-    main {
-        margin: 30px;
-    }
-
-    .articles-list {
-        margin-top: 50px;
-    }
-
-    .categories {
-        list-style: none;
-        padding: 0;
-        display: block;
-    }
-
-    .categories li {
-        display: inline-block;
-        border: 1px solid;
-        padding: 3px;
-        border-radius: 5px;
-        margin-bottom: 3px;
-        margin-right: 5px;
-        background-color: rgb(131, 255, 224);
     }
 
 </style>

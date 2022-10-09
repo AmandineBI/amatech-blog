@@ -18,7 +18,7 @@
         </template>
         
         <div v-if="props.blog_posts">
-            <div class="articles-list" v-for="post in props.blog_posts">
+            <div class="mt-10" v-for="post in props.blog_posts">
                 <h3>{{ post.title }}</h3>
                 <div><small>{{ post.author }}</small></div>
                 <div><small>{{ post.published_at }}</small></div>
@@ -26,7 +26,7 @@
                 {{ post.content }}
                 <br/>
                 <p><a href="post/{{ post.id }}">Edit post</a></p>
-                <ol class="categories">
+                <ol class="list-none p-0 block">
                     <li v-for="tag in post.tag">{{ tag.original_name }}</li>
                 </ol>
             </div>
@@ -47,14 +47,6 @@
 
     h1 {
         max-width: 1000px;
-    }
-
-    main {
-        margin: 30px;
-    }
-
-    .articles-list {
-        margin-top: 50px;
     }
 
     .categories {
