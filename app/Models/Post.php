@@ -9,11 +9,13 @@ use App\Models\Tag;
 use App\Models\Content;
 use App\Models\SeoContent;
 use App\Models\Level;
+use Spatie\Tags\HasTags;
 
 
 class Post extends Model
 {
     use HasFactory;
+    use HasTags;
 
     protected  $table = "posts";
 
@@ -49,7 +51,7 @@ class Post extends Model
     protected $attributes = [
         'author' => 'Amandine Levecq',
         'original_language_code' => 'EN',
-        'published' => 1,
+        'published' => 0,
         'categories' => '',
         'level' => 1,
     ];

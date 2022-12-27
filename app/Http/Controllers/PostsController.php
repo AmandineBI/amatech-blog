@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
-use App\Models\Tag;
+use App\Models\Category;
+//use App\Models\Tag;
 use Inertia\Inertia;
+use Spatie\Tags\Tag; 
+use Illuminate\Support\Facades\Response;
 
 class PostsController extends Controller
 {
@@ -77,7 +80,9 @@ class PostsController extends Controller
                         })*/
                         ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN"')
                         ->select('posts.*', DB::raw('coalesce(contents.content, posts.original_content) AS content'))
+                        ->orderBy('published', 'asc')
                         ->orderBy('published_at', 'desc')
+                        ->orderBy('updated_at', 'desc')
                         ->get();
                 
         return Inertia::render('Blog/Admin/ListPost', [
@@ -135,6 +140,7 @@ class PostsController extends Controller
         if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
+            $categories = Category::all();
             return Inertia::render('Blog/Admin/CreatePost', [
                 'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
@@ -142,6 +148,7 @@ class PostsController extends Controller
                     'list' => true,
                     'edit' => auth()->user()?->is_admin,
                 ],
+                'categories' => $categories,
                 //'blog_post' => $post[0],
             ]);
         }
@@ -154,7 +161,7 @@ class PostsController extends Controller
             'title' => $request->validated()['title'],
             'original_content' => $request->validated()['content'],
             'original_seo_content' => $request->validated()['content'],
-            'categories' => 0,
+            'categories' => $request->category?$request->category:0,
         ]);
         return redirect()->route('adminPanel')
                     ->with('message', 'Post created successfully');
@@ -173,21 +180,22 @@ class PostsController extends Controller
 
 
     public function edit($post_id) { // Limit data
-        $post = Post::query()
-                        ->with(['tags' => function ($query) {
-                            $query->select('original_name');
-                        }])
-                        ->join('contents', 'posts.id', '=', 'contents.post_id', 'left outer')
-                        ->join('seo_contents', 'posts.id', '=', 'seo_contents.post_id', 'left outer')
-                        ->where('posts.id', $post_id)
-                        ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN" and posts.published')
-                        ->select('posts.*', DB::raw('coalesce(contents.content, posts.original_content) AS final_content, coalesce(contents.title, posts.title) AS final_title'))
-                        ->orderBy('published_at', 'desc')
-                        ->get(); // This returns an array???
 
         if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
+            $post = Post::query()
+                    ->with(['tags' => function ($query) {
+                        $query->select('original_name');
+                    }])
+                    ->join('contents', 'posts.id', '=', 'contents.post_id', 'left outer')
+                    ->join('seo_contents', 'posts.id', '=', 'seo_contents.post_id', 'left outer')
+                    ->where('posts.id', $post_id)
+                    ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN"')
+                    ->select('posts.*', DB::raw('coalesce(contents.content, posts.original_content) AS final_content, coalesce(contents.title, posts.title) AS final_title'))
+                    ->orderBy('published_at', 'desc')
+                    ->get(); // This returns an array???
+            $categories = Category::all();
             return Inertia::render('Blog/Admin/EditPost', [
                 'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
@@ -196,6 +204,7 @@ class PostsController extends Controller
                     'edit' => auth()->user()?->is_admin,
                 ],
                 'blog_post' => $post[0],
+                'categories' => $categories
             ]);
         }
     }
@@ -206,9 +215,22 @@ class PostsController extends Controller
         $post->update([
             'title' => $request->validated()['title'],
             'original_content' => $request->validated()['content'],
+            'categories' => $request->category
         ]);
 
         return redirect()->route('adminPanel')
             ->with('message', 'Post updated successfully');
     }
+
+    public function publish($post_id) {
+        $post = Post::find($post_id);
+        $post->update([
+            'published' => 1,
+            'published_at' => now()
+        ]);
+
+        return redirect()->route('adminPanel')
+            ->with('message', 'Post published successfully');
+    }
+
 }

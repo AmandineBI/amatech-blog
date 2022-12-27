@@ -9,13 +9,15 @@
         },
         props: {
             errors: Object,
-            blog_post: Object
+            blog_post: Object,
+            categories: Object
         },
         setup(props) {
             const form = useForm({ //props.blog_post
                 id: props.blog_post.id,
                 title: props.blog_post.title,
-                content: props.blog_post.original_content
+                content: props.blog_post.original_content,
+                category: props.blog_post.categories
             })
             console.log(props.blog_post);
             return { form }
@@ -53,6 +55,18 @@
                     <div v-if="errors.content" class="text-red-600">
                         {{ errors.content}}
                     </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label for="category" class="block font-medium text-sm text-gray-700">
+                    Category
+                </label>
+                <select v-model="form.category" id="category" placeholder="Category" class="block mt-1 w-full rounded">
+                    <option v-for="(category) in categories" v-bind:value="category.id">{{ category.original_name }}</option>
+                </select>
+                <div v-if="errors.category" class="text-red-600">
+                    {{ errors.category}}
                 </div>
             </div>
 

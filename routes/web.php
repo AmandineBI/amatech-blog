@@ -38,14 +38,13 @@ Route::group(['middleware' => 'auth'], function() {
 });
 
 Route::group(['prefix' => 'admin', 'middelware' => ['auth', 'is_admin']], function () {
+    Route::patch('blog/adminPanel/{id}', [PostsController::class, 'publish'], ['adminFunctionality' => true])->name('publish');
     Route::get('blog/adminPanel', [PostsController::class, 'indexAdmin'], ['adminFunctionality' => true])->name('adminPanel');
     Route::resource('blog', PostsController::class)->names('adminBlog');
     Route::resource('blog/adminPanel/categories', CategoriesController::class)->names('adminCategories');
 });
 
 Route::resource('blog', PostsController::class)->only(['index', 'show'])->names('blog');
-Route::resource('blog', PostsController::class)->only(['store', 'create'])->names('postBlog');
-
 
 
 

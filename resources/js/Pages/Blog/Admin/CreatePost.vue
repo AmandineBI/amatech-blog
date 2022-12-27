@@ -1,22 +1,31 @@
 <script>
     import DefaultLayout from '@/Layouts/DefaultLayout.vue';
     import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+    import Vue3TagsInput from 'vue3-tags-input';
+
     
     export default {
         props: ['can'],
         components: {
-            DefaultLayout, Head, Link
+            DefaultLayout, Head, Link, Vue3TagsInput
         },
         props: {
-            errors: Object
+            errors: Object,
+            categories: Object
         },
         setup() {
             const form = useForm({
                 title: '',
-                content: ''
+                content: '',
+                category: '',
+                tags: []
             })
-            console.log(form);
             return { form }
+        },
+        methods: {
+            handleChangeTag(tags) {
+            this.tags = tags;
+            }
         }
     }
 
@@ -33,13 +42,14 @@
         </template>
         
         <div class="grid grid-cols-2 gap-4">
-            <form @submit.prevent="form.post(route('postBlog.store'))">
+            <form @submit.prevent="form.post(route('adminBlog.store'))">
                 <div>
+
                     <div>
                         <label for="title" class="block font-medium text-sm text-gray-700 mt-5">
                             Title
                         </label>
-                        <input v-model="form.title" type="text" id="title" class="block mt-1 w-full rounded"/>
+                        <input v-model="form.title" type="text" id="title" placeholder="Title" class="block mt-1 w-full rounded"/>
                         <div v-if="errors.title" class="text-red-600">
                             {{ errors.title}}
                         </div>
@@ -49,11 +59,37 @@
                         <label for="content" class="block font-medium text-sm text-gray-700">
                             Content
                         </label>
-                        <textarea v-model="form.content" type="text" id="content" class="block mt-1 w-full rounded"/>
+                        <textarea v-model="form.content" type="text" id="content" placeholder="Content" class="block mt-1 w-full rounded"/>
                         <div v-if="errors.content" class="text-red-600">
                             {{ errors.content}}
                         </div>
                     </div>
+
+                    <div class="mt-4">
+                        <label for="category" class="block font-medium text-sm text-gray-700">
+                            Category
+                        </label>
+                        <select v-model="form.category" id="category" placeholder="Category" class="block mt-1 w-full rounded">
+                            <option v-for="(category) in categories" v-bind:value="category.id">{{ category.original_name }}</option>
+                        </select>
+                        <div v-if="errors.category" class="text-red-600">
+                            {{ errors.category}}
+                        </div>
+                    </div>
+                    
+
+                    <!--div class="mt-4"> ADD THIS PACKAGE FOR THE TAGS: https://github.com/voerro/vue-tagsinput
+                        <input v-model="form.tags" id="tags" :existing-tags="tags" :typeahead="true" typeahead-style="badges"/>
+                    </div-->
+                    <!--div class="mt-4">
+                        <label for="tags" class="block font-medium text-sm text-gray-700">
+                            Tags
+                        </label>
+                        <vue3-tags-input v-model="form.tags" id="tags" :tags="form.tags" placeholder="Tags" @on-tags-changed="handleChangeTag" class="block mt-1 w-full rounded"/>
+                        <div v-if="errors.tags" class="text-red-600">
+                            {{ errors.tags}}
+                        </div>
+                    </div-->
                 </div>
 
                 <div class="py-4">
