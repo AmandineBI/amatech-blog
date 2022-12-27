@@ -44,6 +44,8 @@ Route::group(['prefix' => 'admin', 'middelware' => ['auth', 'is_admin']], functi
 });
 
 Route::resource('blog', PostsController::class)->only(['index', 'show'])->names('blog');
+Route::resource('blog', PostsController::class)->only(['store', 'create'])->names('postBlog');
+
 
 
 

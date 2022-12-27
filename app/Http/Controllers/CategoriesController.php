@@ -51,16 +51,6 @@ class CategoriesController extends Controller
 
             $categories = Category::all();
 
-            return Inertia::render('Blog/Admin/ListCategory', [
-                'permissions' => auth()->user()?->is_admin,
-                'filters' => request()->all('search'),
-                'can' => [
-                    'list' => true,
-                    'edit' => auth()->user()?->is_admin,
-                ],
-                'categories' => $categories,
-            ]);
-
             return redirect()->route('adminCategories.index')->with('message', "Category created successfully");
 
         }
@@ -94,11 +84,14 @@ class CategoriesController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit()
     {
         if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
+            sleep(1);
+            $categories = Category::all();
+
             return Inertia::render('Blog/Admin/ListCategory', [
                 'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
@@ -106,6 +99,7 @@ class CategoriesController extends Controller
                     'list' => true,
                     'edit' => auth()->user()?->is_admin,
                 ],
+                'categories' => $categories,
             ]);
         }
     }

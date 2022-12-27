@@ -18,13 +18,15 @@ class StorePostRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     * IF THE SUBMIT FORM BUTTON DOES NOTHING, THE LIST OF FIELDS IN THE RETURN IS W-R-O-N-G!!!
      *
      * @return array<string, mixed>
      */
     public function rules()
     {
         return [
-            'original_name' => 'required'
+            'title' => 'required',
+            'content' => 'required'
         ];
     }
 }
