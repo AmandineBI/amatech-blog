@@ -38,8 +38,10 @@ Route::group(['middleware' => 'auth'], function() {
 });
 
 Route::group(['prefix' => 'admin', 'middelware' => ['auth', 'is_admin']], function () {
-    Route::patch('blog/adminPanel/{id}', [PostsController::class, 'publish'], ['adminFunctionality' => true])->name('publish');
+    Route::patch('blog/adminPanel/{id}', [PostsController::class, 'publish'], ['adminFunctionality' => true])->name('adminPanel.publish');
+    Route::patch('blog/adminPanel/archive/{id}', [PostsController::class, 'archive'], ['adminFunctionality' => true])->name('adminPanel.archive');
     Route::get('blog/adminPanel', [PostsController::class, 'indexAdmin'], ['adminFunctionality' => true])->name('adminPanel');
+    Route::get('blog/adminPanel/category/{id}', [PostsController::class, 'indexAdminCategory'], ['adminFunctionality' => true])->name('adminPanel.category');
     Route::resource('blog', PostsController::class)->names('adminBlog');
     Route::resource('blog/adminPanel/categories', CategoriesController::class)->names('adminCategories');
 });

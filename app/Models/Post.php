@@ -42,10 +42,13 @@ class Post extends Model
         'published_at',
         'categories',
         'level',
+        'archived',
+        'archived_at'
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
+        'archived_at' => 'datetime'
     ];
 
     protected $attributes = [
@@ -54,6 +57,7 @@ class Post extends Model
         'published' => 0,
         'categories' => '',
         'level' => 1,
+        'archived' => 0
     ];
 
     public function categories()

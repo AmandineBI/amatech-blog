@@ -67,6 +67,7 @@ class PostsController extends Controller
 
 
     public function indexAdmin() {
+        $categories = Category::all();
 
         $posts = Post::query()
                         ->with(['tags' => function ($query) {
@@ -93,6 +94,41 @@ class PostsController extends Controller
                 'edit' => auth()->user()?->is_admin,
             ],
             'blog_posts' => $posts,
+            'categories' => $categories
+        ]);
+        
+    }
+
+    public function indexAdminCategory($category_id) {
+        $categories = Category::all();
+
+        $posts = Post::query()
+                        ->with(['tags' => function ($query) {
+                            $query->select('original_name');
+                        }])
+                        ->join('contents', 'posts.id', '=', 'contents.post_id', 'left outer')
+                        ->join('seo_contents', 'posts.id', '=', 'seo_contents.post_id', 'left outer')
+                        /*->where(function ($query) {
+                            $query->where('contents.language_code', '=', 'EN')
+                                ->orWhere();
+                        })*/
+                        ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN" and categories = '.$category_id)
+                        ->select('posts.*', DB::raw('coalesce(contents.content, posts.original_content) AS content'))
+                        ->orderBy('published', 'asc')
+                        ->orderBy('published_at', 'desc')
+                        ->orderBy('updated_at', 'desc')
+                        ->get();
+                
+        return Inertia::render('Blog/Admin/ListPost', [
+            'permissions' => auth()->user()?->is_admin,
+            'filters' => request()->all('search'),
+            'can' => [
+                'list' => true,
+                'edit' => auth()->user()?->is_admin,
+            ],
+            'blog_posts' => $posts,
+            'categories' => $categories,
+            'selectedCategoryId' => $category_id
         ]);
         
     }
@@ -231,6 +267,16 @@ class PostsController extends Controller
 
         return redirect()->route('adminPanel')
             ->with('message', 'Post published successfully');
+    }
+
+    public function archive($post_id) {
+        $post = Post::find($post_id);
+        $post->update([
+            'published' => 0
+        ]);
+
+        return redirect()->route('adminPanel')
+            ->with('message', 'Post archived successfully');
     }
 
 }

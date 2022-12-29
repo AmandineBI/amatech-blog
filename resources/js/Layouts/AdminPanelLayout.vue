@@ -36,7 +36,7 @@
                                     <NavLink :href="route('blog.index')" :active="route().current('blog.index')">
                                         Blog
                                     </NavLink>
-                                    <NavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('adminPanel')">
+                                    <NavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('adminPanel*')">
                                         Admin Panel
                                     </NavLink>
                                 </div>
@@ -91,7 +91,7 @@
                             <ResponsiveNavLink :href="route('blog.index')" :active="route().current('blog.index')">
                                 Blog
                             </ResponsiveNavLink>
-                            <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('adminPanel')">
+                            <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('adminPanel*')">
                                 Admin Panel
                             </ResponsiveNavLink>
                         </div>
@@ -126,7 +126,7 @@
                             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                                 <div class="p-6 bg-white border-b border-gray-200 grid grid-cols-5">
                                     <div class="col-span-1 pr-5 border-r-2 border-r-slate-200">
-                                        <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('adminPanel')">
+                                        <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel')" :active="route().current('adminPanel*')">
                                             Posts
                                         </ResponsiveNavLink>
                                         <ResponsiveNavLink v-if="$page.props.auth.user?.is_admin" :href="route('adminCategories.index')" :active="route().current('adminCategories.index')">
