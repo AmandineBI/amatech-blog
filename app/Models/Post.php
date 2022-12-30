@@ -52,7 +52,7 @@ class Post extends Model
     ];
 
     protected $attributes = [
-        'author' => 'Amandine Levecq',
+        'author' => 'Amatech',
         'original_language_code' => 'EN',
         'published' => 0,
         'categories' => '',

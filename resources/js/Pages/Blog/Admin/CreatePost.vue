@@ -11,12 +11,14 @@
         },
         props: {
             errors: Object,
-            categories: Object
+            categories: Object,
+            languages: Array
         },
         setup() {
             const form = useForm({
                 title: '',
                 content: '',
+                language: 'EN',
                 category: '',
                 tags: []
             })
@@ -55,6 +57,18 @@
                         </div>
                     </div>
 
+                    <div class="mt-4">
+                        <label for="language" class="block font-medium text-sm text-gray-700">
+                            Language
+                        </label>
+                        <select v-model="form.language" id="language" placeholder="Language" class="block mt-1 w-full rounded">
+                            <option v-for="(language) in languages" :key="language.language_code" v-bind:value="language.language_code">{{ language.language_name }}</option>
+                        </select>
+                        <div v-if="errors.language" class="text-red-600">
+                            {{ errors.language}}
+                        </div>
+                    </div>
+                    
                     <div class="mt-4">
                         <label for="content" class="block font-medium text-sm text-gray-700">
                             Content

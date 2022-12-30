@@ -51,10 +51,12 @@ export default {
             <AdminPanelNavBarLayout :categories="categories">
 
                 <div v-if="blog_posts">
-                    <div class="my-5 py-5 border-b-2 border-b-gray-100" v-for="post in blog_posts" :key="post.id">
+                    <div class="my-5 py-5 border-b-2 border-b-gray-100" v-for="post in blog_posts" :key="post.id" :load="log(JSON.stringify(post))">
                         <h3 class="text-lg font-bold">{{ post.title }}</h3>
+                        <span>{{ post.slug }}</span>
                         <div class="text-xs">{{ post.author }}</div>
-                        <div class="text-xs">{{ post.published_at }}</div>
+                        <div class="text-xs">Created at: {{ post.created_at }} - Published at: {{ /*Intl.DateTimeFormat('default', {dateStyle: 'full', timeStyle: 'long'}).format(*/post.published_at }}</div>
+                        <span>{{ post.original_language_code }} - {{ post.category_name }} - Level: {{ post.level }}</span>
                         <div class="my-2">
                             {{ post.content }}
                         </div>

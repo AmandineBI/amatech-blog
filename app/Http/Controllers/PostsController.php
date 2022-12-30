@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
+use App\Models\Language;
 use App\Models\Category;
 //use App\Models\Tag;
 use Inertia\Inertia;
@@ -75,12 +76,13 @@ class PostsController extends Controller
                         }])
                         ->join('contents', 'posts.id', '=', 'contents.post_id', 'left outer')
                         ->join('seo_contents', 'posts.id', '=', 'seo_contents.post_id', 'left outer')
+                        ->join('categories', 'categories', '=', 'categories.id', 'left outer')
                         /*->where(function ($query) {
                             $query->where('contents.language_code', '=', 'EN')
                                 ->orWhere();
                         })*/
                         ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN"')
-                        ->select('posts.*', DB::raw('coalesce(contents.content, posts.original_content) AS content'))
+                        ->select('posts.*', 'categories.original_name as category_name', DB::raw('coalesce(contents.content, posts.original_content) AS content'))
                         ->orderBy('published', 'asc')
                         ->orderBy('published_at', 'desc')
                         ->orderBy('updated_at', 'desc')
@@ -177,6 +179,7 @@ class PostsController extends Controller
             abort(403);
         } else {
             $categories = Category::all();
+            $languages = Language::all();
             return Inertia::render('Blog/Admin/CreatePost', [
                 'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
@@ -185,6 +188,7 @@ class PostsController extends Controller
                     'edit' => auth()->user()?->is_admin,
                 ],
                 'categories' => $categories,
+                'languages' => $languages
                 //'blog_post' => $post[0],
             ]);
         }
@@ -198,6 +202,7 @@ class PostsController extends Controller
             'original_content' => $request->validated()['content'],
             'original_seo_content' => $request->validated()['content'],
             'categories' => $request->category?$request->category:0,
+            'original_language_code' => $request->language?$request->language:'EN',
         ]);
         return redirect()->route('adminPanel')
                     ->with('message', 'Post created successfully');
@@ -232,6 +237,7 @@ class PostsController extends Controller
                     ->orderBy('published_at', 'desc')
                     ->get(); // This returns an array???
             $categories = Category::all();
+            $languages = Language::all();
             return Inertia::render('Blog/Admin/EditPost', [
                 'permissions' => auth()->user()?->is_admin,
                 'filters' => request()->all('search'),
@@ -240,7 +246,8 @@ class PostsController extends Controller
                     'edit' => auth()->user()?->is_admin,
                 ],
                 'blog_post' => $post[0],
-                'categories' => $categories
+                'categories' => $categories,
+                'languages' => $languages,
             ]);
         }
     }
@@ -251,7 +258,8 @@ class PostsController extends Controller
         $post->update([
             'title' => $request->validated()['title'],
             'original_content' => $request->validated()['content'],
-            'categories' => $request->category
+            'categories' => $request->category,
+            'original_languase_code' => $request-> language,
         ]);
 
         return redirect()->route('adminPanel')
