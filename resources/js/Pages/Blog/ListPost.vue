@@ -18,16 +18,22 @@
         </template>
         
         <div v-if="props.blog_posts">
-            <div class="mt-10" v-for="post in props.blog_posts">
+            <div class="mt-10" v-for="post in props.blog_posts" :key="post.id">
                 <h3>{{ post.title }}</h3>
-                <div><small>{{ post.author }}</small></div>
-                <div><small>{{ post.published_at }}</small></div>
+                <div>
+                    <small>{{ post.author }}</small>
+                </div>
+                <div>
+                    <small>{{ post.published_at }}</small>
+                </div>
                 <br/>
                 {{ post.content }}
                 <br/>
                 <p><a href="post/{{ post.id }}">Edit post</a></p>
                 <ol class="list-none p-0 block">
-                    <li v-for="tag in post.tag">{{ tag.original_name }}</li>
+                    <li v-for="tag in post.tag" :key="tag.id">
+                        {{ tag.original_name }}
+                    </li>
                 </ol>
             </div>
         </div>

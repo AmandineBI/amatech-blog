@@ -15,13 +15,11 @@ export default {
     methods: {
         destroy(id) {
             console.log("Deleting category...")
-            console.log(this.forms);
             if(confirm('Are you sure?')) {
                 Inertia.delete(route('adminCategories.destroy', id))
                 this.forms = this.forms.filter(form => form.id != id)
             }
             console.log("Category deleted")
-            console.log(this.forms)
         },
         log(item) {
             console.log(item)
@@ -35,7 +33,6 @@ export default {
         return { forms }
     }
 }
-
 
 /*let cat = props.categories
 let forms = cat.map(category => useForm({
@@ -59,15 +56,15 @@ let forms = cat.map(category => useForm({
 
             <Link :href="route('adminCategories.create')" class="inline-block px-4 py-3 bg-blue-500 text-white rounded mb-4">Create new category</Link>
 
-            <div class="my-5 py-5 border-b-2 border-b-slate-200" v-for="form in forms" :key="form.id" :load="log('First div')">
+            <div class="my-5 py-5 border-b-2 border-b-slate-200" v-for="form in forms" :key="form.id">
 
-                <form @submit.prevent="form.put(route('adminCategories.update', {id: form.id}))" :load="log('Form' + form)">
-                    <div :load="log('Formdiv')">
+                <form @submit.prevent="form.put(route('adminCategories.update', {id: form.id}))">
+                    <div>
                         <div>
                             <label for="original_name" class="block text-lg font-bold text-sm text-gray-700 mt-5">
                                 {{ form.original_name }}
                             </label>
-                            <input v-model="form.original_name" type="text" id="original_name" class="block mt-1 w-full rounded" :load="log('v-model')"/>
+                            <input v-model="form.original_name" type="text" id="original_name" class="block mt-1 w-full rounded"/>
                             <div v-if="errors.original_name" class="text-red-600">
                                 {{ errors.original_name}}
                             </div>

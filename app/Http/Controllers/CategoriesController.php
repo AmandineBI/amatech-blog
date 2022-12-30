@@ -20,7 +20,6 @@ class CategoriesController extends Controller
         if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
-            sleep(1);
             $categories = Category::all();
 
             return Inertia::render('Blog/Admin/ListCategory', [
@@ -89,7 +88,6 @@ class CategoriesController extends Controller
         if (!auth()->user()?->is_admin) {
             abort(403);
         } else {
-            sleep(1);
             $categories = Category::all();
 
             return Inertia::render('Blog/Admin/ListCategory', [

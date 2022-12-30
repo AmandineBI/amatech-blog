@@ -6,6 +6,8 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\RedirectAuthenticatedUsersController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\LanguagesController;
+use App\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +46,8 @@ Route::group(['prefix' => 'admin', 'middelware' => ['auth', 'is_admin']], functi
     Route::get('blog/adminPanel/category/{id}', [PostsController::class, 'indexAdminCategory'], ['adminFunctionality' => true])->name('adminPanel.category');
     Route::resource('blog', PostsController::class)->names('adminBlog');
     Route::resource('blog/adminPanel/categories', CategoriesController::class)->names('adminCategories');
+    Route::resource('blog/adminPanel/languages', LanguagesController::class)->names('adminLanguages');
+    Route::resource('blog/adminPanel/users', UsersController::class)->names('adminUsers');
 });
 
 Route::resource('blog', PostsController::class)->only(['index', 'show'])->names('blog');

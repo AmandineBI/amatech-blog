@@ -24,6 +24,9 @@ export default {
         },
         archive(id) {
             Inertia.patch(route('adminPanel.archive', id));
+        },
+        log(item) {
+            console.log(item)
         }
     }
 }
@@ -48,7 +51,7 @@ export default {
             <AdminPanelNavBarLayout :categories="categories">
 
                 <div v-if="blog_posts">
-                    <div class="my-5 py-5 border-b-2 border-b-slate-200" v-for="post in blog_posts">
+                    <div class="my-5 py-5 border-b-2 border-b-gray-100" v-for="post in blog_posts" :key="post.id">
                         <h3 class="text-lg font-bold">{{ post.title }}</h3>
                         <div class="text-xs">{{ post.author }}</div>
                         <div class="text-xs">{{ post.published_at }}</div>
@@ -58,7 +61,7 @@ export default {
 
                         <ol class="list-none p-1 block">
                             Tags: 
-                            <li class="inline-block border-2 border-teal-300 p-1 rounded my-1 mr-3 bg-teal-100" v-for="tag in post.tags">
+                            <li class="inline-block border-2 border-teal-300 p-1 rounded my-1 mr-3 bg-teal-100" v-for="tag in post.tags" :key="tag">
                                 {{ tag.original_name }}
                             </li>
                         </ol>

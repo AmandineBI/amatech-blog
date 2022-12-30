@@ -63,7 +63,7 @@
                     Category
                 </label>
                 <select v-model="form.category" id="category" placeholder="Category" class="block mt-1 w-full rounded">
-                    <option v-for="(category) in categories" v-bind:value="category.id">{{ category.original_name }}</option>
+                    <option v-for="category in categories" :key="category.id" v-bind:value="category.id">{{ category.original_name }}</option>
                 </select>
                 <div v-if="errors.category" class="text-red-600">
                     {{ errors.category}}

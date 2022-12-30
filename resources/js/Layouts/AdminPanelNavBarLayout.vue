@@ -18,6 +18,9 @@
         methods: {
             setCategory() {
                 category = this.category
+            },
+            log(item) {
+                console.log(item)
             }
         },
         //computed: {
@@ -29,8 +32,8 @@
 </script>
 
 <template>
-        <div class="border-b border-gray-100 flex">
-            <NavLink class="mr-5 pb-3" v-for="category in categories" v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel.category', category.id)" :active="route().current('adminPanel.category', category.id)">
+        <div class="border-b border-t border-gray-100 flex">
+            <NavLink class="mr-5 pb-3 pt-3" v-for="category in categories" :key="category.id" v-if="$page.props.auth.user?.is_admin" :href="route('adminPanel.category', category.id)" :active="route().current('adminPanel.category', category.id)">
                 {{ category.original_name }}
             </NavLink>
         </div>
