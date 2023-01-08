@@ -10,6 +10,8 @@
         <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 
         <!-- Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
+
         @routes
         @vite('default')
         @inertiaHead
