@@ -69,7 +69,6 @@ class PostsController extends Controller
 
     public function indexAdmin() {
         $categories = Category::all();
-
         $posts = Post::query()
                         ->with(['tags' => function ($query) {
                             $query->select('original_name');
@@ -136,7 +135,10 @@ class PostsController extends Controller
     }
 
 
-    public function show($post_id) { // Limit data
+    public function show($data) { // Limit data
+
+        $field = is_numeric($data) ? 'id' : 'slug';
+
         $post = Post::query()
                         ->with(['tags' => function ($query) {
                             $query->select('original_name');
@@ -147,8 +149,8 @@ class PostsController extends Controller
                             $query->where('contents.language_code', '=', 'EN')
                                 ->orWhere();
                         })*/
-                        ->where('posts.id', $post_id)
-                        ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN" and posts.published')
+                        ->where('posts.' . $field, $data)
+                        ->whereRaw('coalesce(contents.language_code, "EN") = "EN" and coalesce(seo_contents.language_code, "EN") = "EN"')
                         ->select('posts.*', DB::raw('coalesce(contents.content, posts.original_content) AS final_content, coalesce(contents.title, posts.title) AS final_title'))
                         ->orderBy('published_at', 'desc')
                         ->get(); // This returns an array???

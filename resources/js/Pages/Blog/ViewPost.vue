@@ -6,9 +6,9 @@
         blog_post: Object,
         canLogin: Boolean,
         canRegister: Boolean,
-        permissions: Boolean,
-        filters: Array,
-        can: Array,
+        permissions: Number,
+        filters: Object,
+        can: Object,
         laravelVersion: String,
         phpVersion: String,
     });

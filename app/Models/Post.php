@@ -10,14 +10,21 @@ use App\Models\Content;
 use App\Models\SeoContent;
 use App\Models\Level;
 use Spatie\Tags\HasTags;
+use Cviebrock\EloquentSluggable\Sluggable; // Package for creating unique slugs from blog post title.
 
 
 class Post extends Model
 {
     use HasFactory;
     use HasTags;
+    use Sluggable;
 
     protected  $table = "posts";
+
+    public function getRouteKey()
+    {
+        return 'slug';
+    }
 
     /**
      * The primary key associated with the table.
@@ -84,4 +91,19 @@ class Post extends Model
     {
         return $this->belongsToOne(Level::class);
     }
+
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'title'
+            ]
+        ];
+    }
+
 }

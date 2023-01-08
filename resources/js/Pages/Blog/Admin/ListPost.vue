@@ -69,7 +69,7 @@ export default {
                         </ol>
 
                         <Link :href="route('adminBlog.edit', {id: post.id})" class="inline-flex px-4 py-2 mr-5 mt-2 mb-4 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest rounded hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">Edit post</Link>
-                        <Link :href="route('adminBlog.show', {id: post.id})" class="inline-flex px-4 py-2 mr-5 mt-2 mb-4 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest rounded hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">View post</Link>
+                        <Link :href="route('adminBlog.show', {id: post.slug ?? post.id})" class="inline-flex px-4 py-2 mr-5 mt-2 mb-4 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest rounded hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">View post</Link>
                         <BreezeButton @click="destroy(post.id)" class="inline-block mr-5 px-4 py-2 bg-blue-500 text-white rounded mb-4">Delete post</BreezeButton>
                         <BreezeButton v-if="post.published==0" @click="publish(post.id)" class="inline-block px-4 py-2 bg-blue-500 text-white rounded mb-4">Publish post</BreezeButton>
                         <BreezeButton v-else class="inline-block mr-5 px-4 py-2 cursor-default bg-gray-500 hover:bg-gray-500 text-white rounded mb-4">Publish post</BreezeButton>
