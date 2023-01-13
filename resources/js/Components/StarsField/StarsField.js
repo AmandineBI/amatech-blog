@@ -1,6 +1,6 @@
-import { Group, AxesHelper } from 'three';
+import { Group, AxesHelper, Vector3 } from 'three';
 
-import { addSphere, createMasterStar } from "./meshes.js";
+import { addSphere, createMasterStar, createStarSky } from "./meshes.js";
 
 /*https://discoverthreejs.com/book/first-steps/built-in-geometries/*/
 
@@ -26,7 +26,7 @@ class StarsField extends Group {
         this.meshes = addSphere();
         this.stars = [];
 
-        for (let i=0; i<100; i++) {
+        for (let i=0; i<1000; i++) {
             let starrr = this.meshes.starTest
             starrr.position.set(0,0,0);
             this.add(
@@ -34,7 +34,7 @@ class StarsField extends Group {
             );
         };
 
-        this.newStar = new MasterStar(5,1,3,6);
+        this.newStar = new MasterStar(5,1,2.8,6);
         this.newStar2 = new MasterStar(5,1,3,8);
 
         const axesHelper = new AxesHelper( 1 ); // X in red, Y in green and Z in blue.
@@ -54,4 +54,20 @@ class StarsField extends Group {
 
 }
 
-export { StarsField, MasterStar }
+
+class StarSky extends Group {
+    constructor() {
+        super();
+
+        this.meshes = createStarSky();
+
+        for (let i=0; i<this.meshes.stars.length; i++) {
+            this.add(
+                this.meshes.stars[i],
+            );
+        };
+    }
+
+}
+
+export { StarsField, MasterStar, StarSky }

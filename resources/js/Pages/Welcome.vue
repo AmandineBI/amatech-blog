@@ -1,16 +1,19 @@
 <script setup>
 //https://www.youtube.com/watch?v=1mFWG8WBif8&list=PLi-X1Ojrrmi-z6Yq6BMLTixbw3Xzj6yG1&index=6&t=527s
-import { Line, Vector3, BufferGeometry, PerspectiveCamera, Scene, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, DirectionalLight, MeshLambertMaterial, AmbientLight, LineBasicMaterial } from 'three';
+import { Line, Vector3, BufferGeometry, PerspectiveCamera, Scene, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, DirectionalLight, MeshLambertMaterial, AmbientLight, HemisphereLight, LineBasicMaterial } from 'three';
 import { ref, onMounted, computed, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 import { Train } from '../Components/Train/Train.js'
-import { StarsField } from '../Components/StarsField/StarsField.js'
+import { StarsField, StarSky } from '../Components/StarsField/StarsField.js'
 
 /*****************/
 /***** Setup *****/
 /*****************/
 let renderer
+let camera
+let controls
 
 const experience = ref(null)
 const scene = new Scene();
@@ -28,7 +31,7 @@ function updateCamera() {
 }
 watch(aspectRatio, updateRenderer)
 watch(aspectRatio, updateCamera)
-const camera = new PerspectiveCamera(
+camera = new PerspectiveCamera(
   75,
   aspectRatio.value,
   0.1,
@@ -36,7 +39,7 @@ const camera = new PerspectiveCamera(
 );
 camera.aspect = aspectRatio;
 // Move the camera away from center
-camera.position.z = 5
+camera.position.z = -5
 scene.add(camera);
 
 /*****************/
@@ -49,7 +52,7 @@ train.position.y = -1;
 /*****************/
 /***** Stars *****/
 /*****************/
-const stars = new StarsField();
+const stars = new StarSky();
 scene.add(stars);
 
 /*****************/
@@ -75,8 +78,14 @@ cube.rotation.y = degreesToRadians(45)
 /*****************/
 
 // Add ambient light, coming from all directions with a tint
-const lightAmbient = new AmbientLight(0x9eaeff, 0.2)
-scene.add(lightAmbient)
+/*const lightAmbient = new AmbientLight(0x9eaeff, 0.2)
+scene.add(lightAmbient)*/
+//an ambient light
+const amb_light = new AmbientLight(0x909090);
+scene.add(amb_light);
+//the hemisphere light
+const hemi_light = new HemisphereLight(0x21266e, 0x080820, 0.2);
+scene.add(hemi_light);
 
 const lightDirectional = new DirectionalLight(0xffffff, 1)
 scene.add(lightDirectional)
@@ -93,8 +102,12 @@ const loop = () => {
     cube.rotation.y += 0.01;
     train.rotation.y += 0.005;
     train.rotation.y += 0.005;
-    stars.rotation.y += 0.005;
-    stars.rotation.x += 0.005;
+    //stars.rotation.y += 0.005;
+    //stars.rotation.x += 0.005;
+
+    //rotate the sky
+    stars.rotation.y += 0.0001;
+    
     renderer.render(scene, camera);
 }
 
@@ -104,6 +117,13 @@ onMounted(() => {
         canvas: experience.value,
         antialias: true,
     });
+    renderer.shadowMap.enabled = true;
+
+
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enablePan = false;
+    controls.enableZoom = false;
+    
     updateRenderer();
     updateCamera();
     
