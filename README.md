@@ -7,6 +7,10 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Description
+
+Ciel étoilé with Vue, Laravel et Three.js.
+
 ## Mise en production
 
 J'aurai peut-être besoin d'installer Laravel Sail, qui fonctionne avec Docker (et crée même le Docker file).
