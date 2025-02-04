@@ -106,7 +106,7 @@ const loop = () => {
     //stars.rotation.x += 0.005;
 
     //rotate the sky
-    stars.rotation.y += 0.0001;
+    //stars.rotation.y += 0.0001;
     
     renderer.render(scene, camera);
 }

@@ -1,21 +1,21 @@
-import { AdditiveBlending, ShaderMaterial, MeshBasicMaterial, MeshStandardMaterial, MeshPhysicalMaterial, MeshLambertMaterial } from 'three';
+import { Vector3, Color, AdditiveBlending, ShaderMaterial, MeshBasicMaterial, MeshStandardMaterial, MeshPhysicalMaterial, MeshLambertMaterial } from 'three';
 
-function createMaterials()  {
-    const material = new MeshLambertMaterial({ color: 0xffffff});
-    
-    /*new MeshLambertMaterial({
-      color: new THREE.Color('#bb86a1'),
-      roughness: 0,
-      clearcoat: 1,
-      clearcoatRoughness: 0,
-    })*/
-    
-    
-    //MeshStandardMaterial( {color: 0xffffff} );
+function createMaterials(color = 0xffffff, rgbColor = [255, 255, 255], position = [0, 0, -800]) {
+  const material = new MeshLambertMaterial({ color: color });
 
-    //the glsl code for the shaders
-    //vertex shader
-    var _VS = `
+  /*new MeshLambertMaterial({
+    color: new THREE.Color('#bb86a1'),
+    roughness: 0,
+    clearcoat: 1,
+    clearcoatRoughness: 0,
+  })*/
+
+
+  //MeshStandardMaterial( {color: 0xffffff} );
+
+  //the glsl code for the shaders
+  //vertex shader
+  var _VS = `
     uniform vec3 baseColor;
     uniform vec3 viewVector;
     varying float intensity;
@@ -33,8 +33,8 @@ function createMaterials()  {
         //intensity = pow( dot(normalize(viewVector), actual_normal), 2.0 );
     }
     `;
-    //fragment shader
-    var _FS = `
+  //fragment shader
+  var _FS = `
     uniform vec3 baseColor;
     uniform vec3 starObjPosition;
     varying float intensity;
@@ -49,13 +49,18 @@ function createMaterials()  {
     `;
 
     const starMaterial = new ShaderMaterial({
-      vertexShader: _VS,
-      fragmentShader: _FS,
-      blending: AdditiveBlending
-    })
+    uniforms: {
+      baseColor: { type: "c", value: new Color(rgbColor[0], rgbColor[1], rgbColor[2]) },
+      viewVector: { type: "v3", value: new Vector3(0, 0, -5) },
+      starObjPosition: { type: "v3", value: new Vector3(position[0], position[1], position[2]) }
+    },
+    vertexShader: _VS,
+    fragmentShader: _FS,
+    blending: AdditiveBlending
+  })
 
-    return { material, starMaterial };
-  }
-  
+  return { material, starMaterial };
+}
+
 
 export { createMaterials }

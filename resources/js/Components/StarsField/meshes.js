@@ -6,7 +6,10 @@ import * as stars_catalog from './bsc.json' assert { type: 'JSON'};
 
 
 //convert a star's b-v temperature index to human eye color
-function bv2rgb(bv){    // RGB <0,1> <- BV <-0.4,+2.0> [-]
+function bv2rgb(bv_){    // RGB <0,1> <- BV <-0.4,+2.0> [-]
+  let bv = parseFloat(bv_);
+  if (isNaN(bv)) bv = 0.8;
+
   let t;
   let r=0.0;
   let g=0.0;
@@ -27,48 +30,50 @@ function bv2rgb(bv){    // RGB <0,1> <- BV <-0.4,+2.0> [-]
   return [r, g, b];
 }
 
+function rgbToHex(r, g, b) {
+  let hex = r.toString(16) + g.toString(16) + b.toString(16);
+  return hex;
+}
+
+function ascensionDeclinationToCartesian(ra_, de_, r_) {
+  let ra = (parseFloat(ra_[0]) / 24 + parseFloat(ra_[1])  /  (24*60) + parseFloat(ra_[2]) / (24*60*60)) * 2 * Math.PI;
+  let de = (parseFloat(de_[1]) / 360 + parseFloat(de_[2]) / (360*60) + parseFloat(de_[3]) / (360*60*60)) * 2 * Math.PI;
+  let r = r_;
+  if (de_[0] === "-") {
+    de = -de;
+  };
+  let sx = r * Math.cos(de) * Math.cos(ra);
+  let sy = r * Math.cos(de) * Math.sin(ra);
+  let sz = r * Math.sin(de);
+  return [sx, sy, sz];
+}
+
+function vmagToSize(vmag_) {
+  let vmag = parseFloat(vmag_);
+  let size = 10 * Math.pow(1.35, Math.min(-vmag, 0.15));
+  return size;
+}
+
 function createStarSky() {
   const geometries = createGeometries();
   const materials = createMaterials();
 
   let stars_data = stars_catalog.default.stars_catalog.stars;
 
-  const star = new Mesh(geometries.star, materials.material);
+  let stars = stars_data.map((st, i) => {
+    let rgbColor = bv2rgb(st.bv);
+    //let hex_color = parseInt("0x" + rgbToHex(rgbColor[0], rgbColor[1], rgbColor[2]), 16);
+    let position = ascensionDeclinationToCartesian(st.RA, st.DE, 800);
+    let star = new Mesh(geometries.star, createMaterials(null, rgbColor, position).starMaterial);
 
-  let stars = [];
-  for (let i=0; i<stars_data.length; i++) {
-    let st = stars_data[i];
-    let ra = (parseFloat(st.RA[0]) / 24 + parseFloat(st.RA[1])  /  (24*60) + parseFloat(st.RA[2]) / (24*60*60)) * 2 * Math.PI;
-    let de = (parseFloat(st.DE[1]) / 360 + parseFloat(st.DE[2]) / (360*60) + parseFloat(st.DE[3]) / (360*60*60)) * 2 * Math.PI;
-    if (st.DE[0] === "-") {
-      de = -de;
-    };
-    let sx = 800 * Math.cos(de) * Math.cos(ra);
-    let sy = 800 * Math.cos(de) * Math.sin(ra);
-    let sz = 800 * Math.sin(de);
-    let vmag = parseFloat(stars_data[i].vmag);
-    let osize = 10 * Math.pow(1.35, Math.min(-vmag, 0.15));
+    star.position.set(position[0], position[1], position[2]);
 
-    let newStar = star.clone();
-
-    newStar.position.x = sx;
-    newStar.position.y = sy;
-    newStar.position.z = sz;
-
+    let osize = vmagToSize(st.vmag)
     // scale it up a bit
-    newStar.scale.x = newStar.scale.y = newStar.scale.z = osize;
+    star.scale.x = star.scale.y = star.scale.z = osize;
 
-    let bv = parseFloat(st.bv);
-    if (bv == NaN) bv = 0.8;
-
-    let st_color = bv2rgb(bv);
-
-    //newStar.material.uniforms.diffuse = { type: "c", value: { r:st_color[0], g:st_color[1], b:st_color[2]}};
-    newStar.material.color.setRGB(st_color[0]=0?255:st_color[0] * 255, st_color[1] * 255, st_color[2] * 255);
-
-    //finally push it to the stars array 
-    stars.push(newStar); 
-  };
+    return star;
+  })
 
   return {
     stars
